@@ -5,9 +5,11 @@ import (
 	"math/rand"
 	"sync"
 	"time"
+
+	"github.com/jmatastos/concurrent-tuto/model"
 )
 
-var cache = map[int]Book{}
+var cache = map[int]model.Book{}
 var rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
 var m = sync.RWMutex{}
 
@@ -39,7 +41,7 @@ func main() {
 	//time.Sleep(2 * time.Second)
 }
 
-func queryCache(id int) (Book, bool) {
+func queryCache(id int) (model.Book, bool) {
 	m.RLock()
 	b, ok := cache[id]
 	m.RUnlock()
@@ -47,9 +49,9 @@ func queryCache(id int) (Book, bool) {
 	return b, ok
 }
 
-func queryDatabase(id int) (Book, bool) {
+func queryDatabase(id int) (model.Book, bool) {
 	time.Sleep(150 * time.Millisecond)
-	for _, b := range books {
+	for _, b := range model.Books {
 		if b.ID == id {
 			m.Lock()
 			cache[id] = b
@@ -58,5 +60,5 @@ func queryDatabase(id int) (Book, bool) {
 		}
 	}
 
-	return Book{}, false
+	return model.Book{}, false
 }
